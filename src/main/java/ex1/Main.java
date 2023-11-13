@@ -11,16 +11,22 @@ public class Main {
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("ex1");
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
-
-        // 새 엔티티 저장
         transaction.begin();
-        Member member = new Member();
-        member.setId(2L);
-        member.setName("second member");
-        entityManager.persist(member);
-        transaction.commit();
 
-        entityManager.close();
+        try {
+            // UPDATE 쿼리는 따로 persist하지 않아도 된다.
+            Member member1 = entityManager.find(Member.class, 1L);
+            member1.setName("changed name");
+            Member member2 = entityManager.find(Member.class, 2L);
+            entityManager.remove(member2);
+            transaction.commit();
+        } catch (Exception e) {
+            // CRUD 수행 중 문제가 발생하면 트랜잭션을 롤백한다.
+            transaction.rollback();
+        } finally {
+            entityManager.close();
+        }
+
         entityManagerFactory.close();
     }
 }
