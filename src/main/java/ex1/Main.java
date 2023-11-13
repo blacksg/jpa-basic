@@ -12,11 +12,11 @@ public class Main {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
 
-        // 모든 CRUD는 트랜잭션 내에서 수행해야 한다.
+        // 새 엔티티 저장
         transaction.begin();
         Member member = new Member();
-        member.setId(1L);
-        member.setName("first member");
+        member.setId(2L);
+        member.setName("second member");
         entityManager.persist(member);
         transaction.commit();
 
