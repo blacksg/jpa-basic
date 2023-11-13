@@ -4,6 +4,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.util.List;
 
 public class Main {
 
@@ -14,11 +15,14 @@ public class Main {
         transaction.begin();
 
         try {
-            // UPDATE 쿼리는 따로 persist하지 않아도 된다.
-            Member member1 = entityManager.find(Member.class, 1L);
-            member1.setName("changed name");
-            Member member2 = entityManager.find(Member.class, 2L);
-            entityManager.remove(member2);
+            // JPQL: 특정 데이터베이스에 종속적이지 않고 엔티티 객체를 대상으로 하는 쿼리 언어
+            List<Member> resultList = entityManager.createQuery("select m from Member as m", Member.class)
+                .setFirstResult(2)
+                .setMaxResults(5)
+                .getResultList();
+            for (Member member : resultList) {
+                System.out.println("member.id=" + member.getId());
+            }
             transaction.commit();
         } catch (Exception e) {
             // CRUD 수행 중 문제가 발생하면 트랜잭션을 롤백한다.
